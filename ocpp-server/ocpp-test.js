@@ -1,18 +1,15 @@
 import WebSocket from "ws";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import readline from "readline"; // Import readline for user input
+import readline from "readline";
 
-// Generate a unique client device ID
 const clientDeviceId = uuidv4();
-
-// Create an interface for user input
+// const clientDeviceId ="e4710613-f4ea-45e0-841f-cb168663f1d1"
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-// Function to fetch available charging stations
 async function getAvailableStations() {
   try {
     const response = await axios.get("http://localhost:5000/api/stations/");
@@ -23,7 +20,16 @@ async function getAvailableStations() {
   }
 }
 
-// Function to select a station from the list
+async function getAvailableGuns(stationId) {
+  try {
+    const response = await axios.get(`http://localhost:5000/api/stations/${stationId}/guns`);
+    return response.data.filter((gun) => gun.status === "Available");
+  } catch (error) {
+    console.error("Error fetching guns for station:", error);
+    return [];
+  }
+}
+
 async function selectStation() {
   const availableStations = await getAvailableStations();
   if (availableStations.length === 0) {
@@ -38,67 +44,87 @@ async function selectStation() {
   });
 
   return new Promise((resolve) => {
-    rl.question("Select a station by number: ", (input) => {
+    rl.question("Select a station by number: ", async (input) => {
       const selectedIndex = parseInt(input, 10) - 1;
       if (selectedIndex < 0 || selectedIndex >= availableStations.length) {
         console.log("Invalid selection. Please restart and try again.");
         rl.close();
         resolve(null);
       } else {
-        resolve(availableStations[selectedIndex]);
+        const selectedStation = availableStations[selectedIndex];
+        const availableGuns = await getAvailableGuns(selectedStation.stationId);
+        if (availableGuns.length === 0) {
+          console.log("No available guns at this station.");
+          rl.close();
+          resolve(null);
+        } else {
+          console.log("Available Guns:");
+          availableGuns.forEach((gun, index) => {
+            console.log(`${index + 1}. Gun ID: ${gun.gunId}`);
+          });
+
+          rl.question("Select a gun by number: ", (gunInput) => {
+            const selectedGunIndex = parseInt(gunInput, 10) - 1;
+            if (selectedGunIndex < 0 || selectedGunIndex >= availableGuns.length) {
+              console.log("Invalid selection. Please restart and try again.");
+              rl.close();
+              resolve(null);
+            } else {
+              resolve({ station: selectedStation, gun: availableGuns[selectedGunIndex] });
+            }
+          });
+        }
       }
     });
   });
 }
 
-// Function to update station status using the API
-async function updateStationStatus(stationId, status) {
+async function updateGunStatus(stationId, gunId, status) {
   try {
-    await axios.patch(`http://localhost:5000/api/stations/${stationId}`, {
+    await axios.patch(`http://localhost:5000/api/stations/${stationId}/guns/${gunId}`, {
       status,
       lastUpdated: new Date().toISOString(),
       clientDeviceId,
     });
-    console.log(`Station ${stationId} updated to ${status}`);
+    console.log(`Gun ${gunId} at station ${stationId} updated to ${status}`);
   } catch (error) {
-    console.error(`Error updating station ${stationId}:`, error.message);
+    console.error(`Error updating gun ${gunId} at station ${stationId}:`, error.message);
   }
 }
 
-// Function to connect to the OCPP server
 async function connectToServer() {
-  const station = await selectStation();
-  if (!station) return;
+  const selection = await selectStation();
+  if (!selection) return;
 
-  console.log(`Connecting to station: ${station.stationId}`);
+  const { station, gun } = selection;
+  console.log(`Connecting to station: ${station.stationId} and gun: ${gun.gunId}`);
 
   const socket = new WebSocket("ws://localhost:9220");
 
   socket.on("open", async () => {
     console.log(`Connected to OCPP server as ${station.stationId}`);
 
-    // Send BootNotification with clientDeviceId
     const bootMessage = {
       messageType: "BootNotification",
       chargingStationId: station.stationId,
+      gunId: gun.gunId,
       status: "Available",
       clientDeviceId,
     };
     socket.send(JSON.stringify(bootMessage));
 
-    // Update API status to "Charging"
-    await updateStationStatus(station.stationId, "Charging");
+    await updateGunStatus(station.stationId, gun.gunId, "Charging");
 
-    // Send periodic StatusNotification every 5 seconds
     setInterval(async () => {
       const statusMessage = {
         messageType: "StatusNotification",
         chargingStationId: station.stationId,
+        gunId: gun.gunId,
         status: "Charging",
         clientDeviceId,
       };
       socket.send(JSON.stringify(statusMessage));
-      await updateStationStatus(station.stationId, "Charging");
+      await updateGunStatus(station.stationId, gun.gunId, "Charging");
     }, 5000);
   });
 
@@ -108,8 +134,8 @@ async function connectToServer() {
   });
 
   socket.on("close", async () => {
-    console.log(`Disconnected from OCPP server`);
-    await updateStationStatus(station.stationId, "Available");
+    console.log("Disconnected from OCPP server");
+    await updateGunStatus(station.stationId, gun.gunId, "Available");
     rl.close();
   });
 
@@ -118,5 +144,4 @@ async function connectToServer() {
   });
 }
 
-// Start the client
 connectToServer();

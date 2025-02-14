@@ -1,5 +1,5 @@
 import express from "express";
-import { getChargingSessions, createChargingSession } from "../controllers/sessionController.js";
+import { getChargingSessions, createChargingSession, getChargingSessionsById } from "../controllers/sessionController.js";
 
 const router = express.Router();
 
@@ -72,5 +72,57 @@ router.get("/", getChargingSessions);
  *         description: Invalid request.
  */
 router.post("/", createChargingSession);
+
+
+
+
+/**
+* @swagger
+* /api/charging-sessions/{clientId}:
+*   get:
+*     summary: Retrieve charging sessions by client ID
+*     description: Get a list of charging sessions for a specific client.
+*     parameters:
+*       - in: path
+*         name: clientId
+*         required: true
+*         description: ID of the client or device
+*         schema:
+*           type: string
+*     responses:
+*       200:
+*         description: A list of charging sessions.
+*         content:
+*           application/json:
+*             schema:
+*               type: array
+*               items:
+*                 type: object
+*                 properties:
+*                   clientId:
+*                     type: string
+*                     example: "CLIENT123"
+*                   csid:
+*                     type: string
+*                     example: "CHARGER_001"
+*                   startTime:
+*                     type: string
+*                     format: date-time
+*                   endTime:
+*                     type: string
+*                     format: date-time
+*                   duration:
+*                     type: number
+*                     example: 45
+*                   createdAt:
+*                     type: string
+*                     format: date-time
+*       404:
+*         description: No charging sessions found for the client.
+*       500:
+*         description: Server error.
+*/
+router.get('/:clientId', getChargingSessionsById);
+
 
 export default router;

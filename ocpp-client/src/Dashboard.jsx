@@ -32,6 +32,7 @@ const Dashboard = () => {
               <tr className="table-header">
                 <th className="table-cell">Client ID</th>
                 <th className="table-cell">Charger ID</th>
+                <th className="table-cell">Gun ID</th>
                 <th className="table-cell">Start Time</th>
                 <th className="table-cell">End Time</th>
                 <th className="table-cell">Duration</th>
@@ -43,6 +44,7 @@ const Dashboard = () => {
                 <tr key={session.csid} className="table-row">
                   <td className="table-cell">{session.clientId}</td>
                   <td className="table-cell">{session.csid}</td>
+                  <td className="table-cell">{session.gunId}</td>
                   <td className="table-cell">{new Date(session.startTime).toLocaleString()}</td>
                   <td className="table-cell">{session.endTime ? new Date(session.endTime).toLocaleString() : "Ongoing"}</td>
                   <td className="table-cell">{session.duration ? `${session.duration} sec` : "N/A"}</td>

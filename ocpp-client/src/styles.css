@@ -192,4 +192,171 @@
     text-align: left;
   }
   
-  
+  /* Guns Table */
+.guns-table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.guns-table th {
+  background: #343a40;
+  color: white;
+  padding: 8px;
+  text-align: left;
+}
+
+.guns-table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Gun Status */
+.gun-status {
+  padding: 5px 10px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.gun-status.available {
+  background: #28a745;
+  color: white;
+}
+
+.gun-status.charging {
+  background: #ffc107;
+  color: black;
+}
+
+.gun-status.out-of-service {
+  background: #dc3545;
+  color: white;
+}
+
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.dashboard-container,
+.charging-stations-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.heading,
+.title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Table Styles */
+.table-container,
+.stations-table-container {
+  overflow-x: auto;
+}
+
+.charging-table,
+.stations-table-content,
+.guns-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.table-header,
+.table-cell {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.table-header {
+  background-color: #007bff;
+  color: white;
+}
+
+.table-row:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+/* Status Colors */
+.status-badge.available,
+.gun-status.available {
+  background-color: #28a745;
+  color: white;
+}
+
+.status-badge.charging,
+.gun-status.charging {
+  background-color: #ffc107;
+  color: black;
+}
+
+.status-badge.out-of-service,
+.gun-status.out-of-service {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Buttons */
+.update-button,
+.save-button,
+.cancel-button {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.update-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.loading-cell,
+.no-stations-cell {
+  text-align: center;
+  padding: 20px;
+  font-weight: bold;
+}
