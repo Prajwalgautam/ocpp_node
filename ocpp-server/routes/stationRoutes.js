@@ -9,6 +9,7 @@ const router = express.Router();
  *   get:
  *     summary: Retrieve a list of all charging stations
  *     description: Fetch all charging stations along with their status and power.
+ *     tags: [Stations]
  *     responses:
  *       200:
  *         description: A list of charging stations.
@@ -41,6 +42,7 @@ router.get("/", getStations);
  *   patch:
  *     summary: Update the status of a charging station
  *     description: Modify the status of a charging station by its ID.
+ *     tags: [Stations]
  *     parameters:
  *       - in: path
  *         name: stationId
@@ -76,6 +78,7 @@ router.patch("/:stationId", updateStationStatus);
  *   post:
  *     summary: Add a new charging station
  *     description: Add a new charging station with a unique station ID, power rating, and charge guns.
+ *     tags: [Stations]
  *     requestBody:
  *       required: true
  *       content:
@@ -123,6 +126,7 @@ router.post("/addStation", createStation);
  *   get:
  *     summary: Retrieve charging guns by station ID
  *     description: Get a list of charging guns for a specific station.
+ *     tags: [Charging Guns]
  *     parameters:
  *       - in: path
  *         name: stationId
@@ -165,6 +169,7 @@ router.get("/:stationId/guns", getGuns);
  *   patch:
  *     summary: Update the status of a charging gun
  *     description: Modify the status of a charging gun by its ID and station ID.
+ *     tags: [Charging Guns]
  *     parameters:
  *       - in: path
  *         name: stationId

@@ -9,6 +9,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 import { initOCPPServer } from "./ocpp/centralSystem.js";
 import stationRoutes from "./routes/stationRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
+import detailsRoutes from "./routes/detailsRoutes.js";
 
 // Initialize the express app first
 const app = express();
@@ -56,6 +57,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // API Routes
 app.use("/api/stations", stationRoutes);
 app.use("/api/charging-sessions", sessionRoutes);
+app.use("/api/details", detailsRoutes);
 
 const PORT = process.env.PORT || 5000;
 

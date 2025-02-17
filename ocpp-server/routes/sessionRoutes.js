@@ -9,6 +9,7 @@ const router = express.Router();
  *   get:
  *     summary: Retrieve all charging sessions
  *     description: Get a list of all active and completed charging sessions.
+ *     tags: [Charging Sessions]
  *     responses:
  *       200:
  *         description: A list of charging sessions.
@@ -46,6 +47,7 @@ router.get("/", getChargingSessions);
  *   post:
  *     summary: Create a new charging session
  *     description: Start a new charging session with client and charger details.
+ *     tags: [Charging Sessions]
  *     requestBody:
  *       required: true
  *       content:
@@ -82,6 +84,7 @@ router.post("/", createChargingSession);
 *   get:
 *     summary: Retrieve charging sessions by client ID
 *     description: Get a list of charging sessions for a specific client.
+*     tags: [Charging Sessions]
 *     parameters:
 *       - in: path
 *         name: clientId
